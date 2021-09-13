@@ -1,0 +1,11 @@
+.customaction{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  .mat-icon {
+    cursor: pointer;
+    user-select: none;
+  }
+}

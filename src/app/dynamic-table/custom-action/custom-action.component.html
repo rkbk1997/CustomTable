@@ -1,0 +1,18 @@
+<div class="customaction">
+  <button class="btn btn-primary" *ngIf="detail">{{ btntext }}</button>
+  <mat-icon
+    *ngIf="edit"
+    aria-hidden="false"
+    aria-label="Example home icon"
+    class="mx-3"
+    (click)="editCell()"
+    >edit</mat-icon
+  >
+  <mat-icon
+    *ngIf="delete"
+    aria-hidden="false"
+    aria-label="Example home icon"
+    (click)="deleteCell()"
+    >delete</mat-icon
+  >
+</div>

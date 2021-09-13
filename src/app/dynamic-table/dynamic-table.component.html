@@ -1,0 +1,108 @@
+<div class="tableDiv px-5">
+  <div class="filterDiv">
+    <ng-container *ngFor="let fltr of tableFilter">
+      <ng-container [ngSwitch]="fltr.type">
+        <mat-form-field appearance="standard" *ngSwitchCase="'select'">
+          <mat-label>Select {{ fltr.searchHeader | titlecase }} </mat-label>
+          <mat-select [(ngModel)]="selectedValue">
+            <mat-option value="0">{{
+              fltr.searchHeader | titlecase
+            }}</mat-option>
+            <mat-option
+              (click)="selectFilterChange()"
+              *ngFor="let item of fltr.value"
+              [value]="item"
+            >
+              {{ item | titlecase }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="standard"
+          class=""
+          *ngSwitchCase="'calendar'"
+        >
+          <mat-label>Enter a date range</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate placeholder="Start date" />
+            <input matEndDate placeholder="End date" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+
+        <div *ngSwitchCase="'text'">
+          <mat-form-field appearance="standard" class="w-50">
+            <mat-label>Search</mat-label>
+            <input
+              matInput
+              (keyup)="applyFilter($event)"
+              placeholder="Search"
+              [(ngModel)]="selectedInput"
+            /> </mat-form-field
+          >&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="btn btn-secondary">Clear</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- <div class="mat-elevation-z8"> -->
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <div *ngFor="let col of tableDisplayColumns">
+        <ng-container matColumnDef="{{ col }}">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ col | titlecase }}
+            <div class="sortDiv" *ngIf="showSorting(col)">
+              <span class="sortIcon" (click)="ascendingSort(col)"
+                >&nbsp;&nbsp;▲</span
+              >
+              <span class="sortIcon" (click)="decendingsort(col)"
+                >&nbsp;&nbsp;▼</span
+              >
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <div *ngIf="col !== 'action'">
+              <div *ngIf="row[col][0].type === ''">
+                {{ row[col][0].value | titlecase }}
+              </div>
+              <div *ngIf="row[col][0].type == 'custom'">
+                <app-custom-column
+                  [cellData]="row[col]"
+                  [colName]="col"
+                ></app-custom-column>
+              </div>
+            </div>
+            <div *ngIf="col === 'action'">
+              <app-custom-action [cellData]="row"></app-custom-action>
+            </div>
+          </td>
+        </ng-container>
+      </div>
+      <tr mat-header-row *matHeaderRowDef="tableDisplayColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: tableDisplayColumns"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter"</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <ngb-pagination
+      [collectionSize]="collectionSize"
+      [(page)]="page"
+      [pageSize]="10"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="changePage($event)"
+    ></ngb-pagination>
+  </div>
+</div>
