@@ -14,6 +14,11 @@ export class MainComponentComponent implements OnInit, OnChanges {
   className: any;
   entityData: any;
   collectionSize: any;
+  pageSetting = {
+    start: 0,
+    limit: 10,
+    sort: { property: ' ', order: '' },
+  };
   constructor(
     private activatedRoute: ActivatedRoute,
     private api: DataApiService
@@ -29,11 +34,23 @@ export class MainComponentComponent implements OnInit, OnChanges {
   ngOnChanges() {}
 
   setTableData(): any {
-    this.entityData = this.api.getTableDataUser(this.className);
-    console.log(this.entityData);
-    this.tableDisplayColumns = this.entityData.headertoShow;
-    this.tableFilter = this.entityData.filter;
-    this.tableInputData = this.entityData.tableData;
-    this.collectionSize = this.entityData.metaData
+    let payload = {
+      ...this.pageSetting,
+      class: this.className,
+    };
+
+    this.api.getInitialData(payload).subscribe((res) => {
+      console.log(res);
+      this.entityData = res;
+    });
+  }
+
+  loadNextPages(event: any) {
+    console.log(event);
+    this.pageSetting = {
+      ...this.pageSetting,
+      ...event,
+    };
+    this.setTableData();
   }
 }

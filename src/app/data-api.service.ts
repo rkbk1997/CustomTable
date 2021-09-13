@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -65,9 +66,14 @@ let workerList = {
 })
 export class DataApiService {
 
-  constructor(private activatedRoute : ActivatedRoute ) { }
+  constructor(private activatedRoute : ActivatedRoute, private http: HttpClient ) { }
 
   getTableDataUser(className:any):any {
     return className === 'userList'? userList: className === 'workerList' ? workerList : '';
+  }
+
+  getInitialData(payload: any){
+    // console.log(payload);
+    return this.http.post('http://localhost:8080/api/customTable',payload);
   }
 }

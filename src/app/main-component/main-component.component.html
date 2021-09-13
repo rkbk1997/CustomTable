@@ -1,6 +1,4 @@
 <app-dynamic-table
-    [tableDisplayColumns]='tableDisplayColumns'
-    [tableInputData] = 'tableInputData'
-    [tableFilter] ='tableFilter'
-    [collectionSize] ='collectionSize'
+    [entityData] ="entityData"
+    (loadNextPage) = "loadNextPages($event)"
  ></app-dynamic-table>

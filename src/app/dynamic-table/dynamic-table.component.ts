@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, SimpleChange } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+// import { EventEmitter } from 'stream';
+import { DataApiService } from '../data-api.service';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -7,35 +9,45 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./dynamic-table.component.scss'],
 })
 export class DynamicTableComponent implements OnInit {
-  @Input() tableInputData!: any;
-  @Input() tableDisplayColumns: any;
-  @Input() tableFilter: any;
-  @Input() collectionSize: any;
-
+  @Input() entityData: any;
+  @Output() loadNextPage = new EventEmitter<any>();
+  tableInputData: any;
+  tableDisplayColumns: any;
+  tableFilter: any;
+  collectionSize: any;
   dataSource: any;
   selectedInput: any;
   selectedValue: any;
   selectedDate: any;
   page = 1;
   pageSetting = {
-    pageNo: this.page,
-    start: this.page * 10,
+    pageNo: 0,
+    start: 0,
     limit: 10,
-    sort: [{ property: '', order: '' }],
+    sort: { property: '', order: '' },
   };
 
-  constructor() {}
+  constructor(private api: DataApiService) {}
 
   ngOnInit(): void {}
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChange) { 
+    this.tableDisplayColumns = this.entityData?.headerToShow?.headertoShow;
+    this.tableFilter = this.entityData?.filter;
+    this.tableInputData = this.entityData?.tableData;
+    this.collectionSize = this.entityData?.metaData;
     this.dataSource = new MatTableDataSource(this.tableInputData);
   }
 
-  ngAfterViewInit() {}
-
   changePage(event: any) {
-    console.log(event);
+    this.pageSetting = {
+      ...this.pageSetting,
+      pageNo: this.page - 1,
+      start: (this.page - 1) * 10,
+      limit: 10,
+      sort: { property: '', order: '' },
+    };
+    this.loadNextPage.emit(this.pageSetting);
   }
 
   showSorting(headerName: any) {
@@ -52,15 +64,13 @@ export class DynamicTableComponent implements OnInit {
 
   applyFilter(event: any) {}
 
-  pageEvents(e: any) {}
-
   selectFilterChange() {}
 
-  ascendingSort(colName:any){
-    console.log(colName); 
+  ascendingSort(colName: any, order: any) {
+    console.log(colName, order);
   }
 
-  decendingsort(colName: any){
-    console.log(colName);
+  decendingsort(colName: any, order: any) {
+    console.log(colName, order);
   }
 }

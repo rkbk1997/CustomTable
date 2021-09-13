@@ -26,6 +26,7 @@ import { HeaderComponent } from './header/header.component';
 import { DatePipe } from '@angular/common';
 import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatNativeDateModule } from '@angular/material/core';
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +55,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     NgbModule,
     NgbPaginationModule,
     MatNativeDateModule ,
+    HttpClientModule
     // MatMomentDateModule
   ],
   providers: [DatePipe,MatDatepickerModule,{
