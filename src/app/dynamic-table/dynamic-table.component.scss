@@ -1,6 +1,11 @@
 :host {
   ::ng-deep {
     .tableDiv {
+      .heading{
+        font-size: 30px;
+        font-family: 'Times New Roman', Times, serif;
+        text-transform: capitalize;
+      }
       .filterDiv {
         display: flex !important;
         justify-content: space-between !important;

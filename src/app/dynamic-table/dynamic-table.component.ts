@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChange } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged} from 'rxjs/operators'
 // import { EventEmitter } from 'stream';
@@ -15,6 +16,7 @@ export class DynamicTableComponent implements OnInit {
   @Output() loadNextPage = new EventEmitter<any>();
   @Output() resetTable = new EventEmitter<any>();
   searchSubject = new Subject();
+  className: any;
   tableInputData: any;
   tableDisplayColumns: any;
   tableFilter: any;
@@ -38,7 +40,7 @@ export class DynamicTableComponent implements OnInit {
     filter : []
    }
 
-  constructor(private api: DataApiService) {
+  constructor(private api: DataApiService, private activatedRoute: ActivatedRoute) {
     this.searchSubject.pipe(
       debounceTime(1000),
       distinctUntilChanged()
@@ -51,9 +53,14 @@ export class DynamicTableComponent implements OnInit {
     )
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.activatedRoute.params.subscribe(
+      res => this.page =1
+    )
+  }
 
   ngOnChanges(changes: SimpleChange) { 
+    this.className = this.entityData.class
     this.tableDisplayColumns = this.entityData?.headerToShow?.headertoShow;
     this.tableFilter = this.entityData?.filter;
     this.tableInputData = this.entityData?.tableData;
@@ -87,7 +94,7 @@ export class DynamicTableComponent implements OnInit {
 
   applyFilter(header: any, event?: any) {
     this.filterData = this.filterData.filter((item: any) => item.header != header );
-    this.filterData.push({header: header, value: this.selectedInput})
+    if(this.selectedInput)this.filterData.push({header: header, value: this.selectedInput})
     this.page = 1
     let newpageSetting = {
       ...this.pageSetting,
@@ -101,7 +108,7 @@ export class DynamicTableComponent implements OnInit {
   selectFilterChange(header: any , value: any) {
     this.selectValue = value;
     this.filterData = this.filterData.filter((item: any) => item.header != header );
-    this.filterData.push({ header: header, value : value === 'active' ? true : false })
+    if(this.selectValue != '0')this.filterData.push({ header: header, value : value === 'active' ? true : false })
     this.page = 1
     let newpageSetting = {
       ...this.pageSetting,

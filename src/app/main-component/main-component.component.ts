@@ -35,7 +35,9 @@ export class MainComponentComponent implements OnInit, OnChanges {
 
   setTableData(): any {
     let payload = {
-      ...this.pageSetting,
+      start: 0,
+      limit: 10,
+      sort: { property: '', order: '' },
       class: this.className,
     };
 
@@ -45,7 +47,7 @@ export class MainComponentComponent implements OnInit, OnChanges {
     });
   }
 
-  setAttributeData(): any{
+  setAttributeData(): any {
     let payload = {
       ...this.pageSetting,
       class: this.className,
@@ -53,7 +55,7 @@ export class MainComponentComponent implements OnInit, OnChanges {
 
     this.api.getData(payload).subscribe((res: any) => {
       console.log(res.tableData);
-      this.entityData.tableData = res.tableData;
+      this.entityData = res;
     });
   }
 
@@ -63,14 +65,14 @@ export class MainComponentComponent implements OnInit, OnChanges {
       ...this.pageSetting,
       ...event,
     };
-    this.setTableData();
+    this.setAttributeData();
   }
 
-  resetTableData(event: any){
+  resetTableData(event: any) {
     this.pageSetting = {
       ...this.pageSetting,
-      ...event
-    }
+      ...event,
+    };
     this.setTableData();
   }
 }

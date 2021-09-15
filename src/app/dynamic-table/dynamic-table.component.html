@@ -1,15 +1,18 @@
 <div class="tableDiv px-5">
+  <p class="heading">{{ className }}</p>
   <div class="filterDiv">
     <ng-container *ngFor="let fltr of tableFilter">
       <ng-container [ngSwitch]="fltr.type">
         <mat-form-field appearance="standard" *ngSwitchCase="'select'">
           <mat-label>Select {{ fltr.searchHeader | titlecase }} </mat-label>
           <mat-select [(ngModel)]="selectValue">
-            <mat-option value="0" (click) ="selectFilterChange(fltr.searchHeader, '0')" >{{
-              fltr.searchHeader | titlecase
-            }}</mat-option>
             <mat-option
-              (click) ="selectFilterChange(fltr.searchHeader, item)"
+              value="0"
+              (click)="selectFilterChange(fltr.searchHeader, '0')"
+              >{{ fltr.searchHeader | titlecase }}</mat-option
+            >
+            <mat-option
+              (click)="selectFilterChange(fltr.searchHeader, item)"
               *ngFor="let item of fltr.value"
               [value]="item"
             >
@@ -43,24 +46,26 @@
               matInput
               [(ngModel)]="selectedInput"
               placeholder="Search"
-              (keyup) ="this.searchSubject.next($event)"
+              (keyup)="this.searchSubject.next($event)"
             /> </mat-form-field
           >&nbsp;&nbsp;&nbsp;&nbsp;
-          <button class="btn btn-secondary" (click)="resetTableData()">Clear</button>
+          <button class="btn btn-secondary" (click)="resetTableData()">
+            Clear
+          </button>
         </div>
       </ng-container>
     </ng-container>
   </div>
 
   <!-- <div class="mat-elevation-z8"> -->
-  <div class="table-container">
+  <div class="table-container" *ngIf="tableInputData">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <div *ngFor="let col of tableDisplayColumns">
         <ng-container matColumnDef="{{ col }}">
           <th mat-header-cell *matHeaderCellDef>
             {{ col | titlecase }}
             <div class="sortDiv" *ngIf="showSorting(col)">
-              <span class="sortIcon" (click)="ascendingSort(col,'asc')"
+              <span class="sortIcon" (click)="ascendingSort(col, 'asc')"
                 >&nbsp;&nbsp;▲</span
               >
               <span class="sortIcon" (click)="decendingsort(col, 'desc')"
@@ -95,7 +100,7 @@
     </table>
   </div>
 
-  <div class="pagination">
+  <div class="pagination" *ngIf="tableInputData">
     <ngb-pagination
       [collectionSize]="collectionSize"
       [(page)]="page"
@@ -105,5 +110,8 @@
       [boundaryLinks]="true"
       (pageChange)="changePage($event)"
     ></ngb-pagination>
+  </div>
+  <div *ngIf="!tableInputData">
+    <p>No Data found</p>
   </div>
 </div>
