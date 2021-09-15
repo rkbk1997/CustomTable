@@ -17,7 +17,7 @@ export class MainComponentComponent implements OnInit, OnChanges {
   pageSetting = {
     start: 0,
     limit: 10,
-    sort: { property: ' ', order: '' },
+    sort: { property: '', order: '' },
   };
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -45,12 +45,32 @@ export class MainComponentComponent implements OnInit, OnChanges {
     });
   }
 
+  setAttributeData(): any{
+    let payload = {
+      ...this.pageSetting,
+      class: this.className,
+    };
+
+    this.api.getData(payload).subscribe((res: any) => {
+      console.log(res.tableData);
+      this.entityData.tableData = res.tableData;
+    });
+  }
+
   loadNextPages(event: any) {
     console.log(event);
     this.pageSetting = {
       ...this.pageSetting,
       ...event,
     };
+    this.setTableData();
+  }
+
+  resetTableData(event: any){
+    this.pageSetting = {
+      ...this.pageSetting,
+      ...event
+    }
     this.setTableData();
   }
 }

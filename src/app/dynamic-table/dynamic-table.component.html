@@ -4,12 +4,12 @@
       <ng-container [ngSwitch]="fltr.type">
         <mat-form-field appearance="standard" *ngSwitchCase="'select'">
           <mat-label>Select {{ fltr.searchHeader | titlecase }} </mat-label>
-          <mat-select [(ngModel)]="selectedValue">
-            <mat-option value="0">{{
+          <mat-select [(ngModel)]="selectValue">
+            <mat-option value="0" (click) ="selectFilterChange(fltr.searchHeader, '0')" >{{
               fltr.searchHeader | titlecase
             }}</mat-option>
             <mat-option
-              (click)="selectFilterChange()"
+              (click) ="selectFilterChange(fltr.searchHeader, item)"
               *ngFor="let item of fltr.value"
               [value]="item"
             >
@@ -39,13 +39,14 @@
           <mat-form-field appearance="standard" class="w-50">
             <mat-label>Search</mat-label>
             <input
+              id="search"
               matInput
-              (keyup)="applyFilter($event)"
-              placeholder="Search"
               [(ngModel)]="selectedInput"
+              placeholder="Search"
+              (keyup) ="this.searchSubject.next($event)"
             /> </mat-form-field
           >&nbsp;&nbsp;&nbsp;&nbsp;
-          <button class="btn btn-secondary">Clear</button>
+          <button class="btn btn-secondary" (click)="resetTableData()">Clear</button>
         </div>
       </ng-container>
     </ng-container>

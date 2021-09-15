@@ -76,4 +76,8 @@ export class DataApiService {
     // console.log(payload);
     return this.http.post('http://localhost:8080/api/customTable',payload);
   }
+  getData(payload: any){
+    // console.log(payload);
+    return this.http.post('http://localhost:8080/api/customTable',payload);
+  }
 }
