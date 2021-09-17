@@ -1,5 +1,5 @@
 <div class="tableDiv px-5">
-  <p class="heading">{{ className }}</p>
+  <p class="heading"><span>👉</span>&nbsp;{{ className }}</p>
   <div class="filterDiv">
     <ng-container *ngFor="let fltr of tableFilter">
       <ng-container [ngSwitch]="fltr.type">
@@ -26,10 +26,11 @@
           class=""
           *ngSwitchCase="'calendar'"
         >
-          <mat-label>Enter a date range</mat-label>
-          <mat-date-range-input [rangePicker]="picker">
-            <input matStartDate placeholder="Start date" />
-            <input matEndDate placeholder="End date" />
+          <mat-label>Enter {{fltr.searchHeader}} range</mat-label>
+          <mat-date-range-input [(ngModel)]="filterDate" [rangePicker]="picker">
+            <input matStartDate placeholder="Start date" [(ngModel)]="startDate" #dateRangeStart/>
+            <input matEndDate placeholder="End date" [(ngModel)]="endDate"  #dateRangeEnd
+            (dateChange)="applyDateRangeFilter(fltr.searchHeader,dateRangeStart.value, dateRangeEnd.value)"/>
           </mat-date-range-input>
           <mat-datepicker-toggle
             matSuffix
@@ -59,48 +60,51 @@
 
   <!-- <div class="mat-elevation-z8"> -->
   <div class="table-container" *ngIf="tableInputData">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="">
       <div *ngFor="let col of tableDisplayColumns">
-        <ng-container matColumnDef="{{ col }}">
+        <ng-container matColumnDef="{{ col?.field }}">
           <th mat-header-cell *matHeaderCellDef>
-            {{ col | titlecase }}
-            <div class="sortDiv" *ngIf="showSorting(col)">
-              <span class="sortIcon" (click)="ascendingSort(col, 'asc')"
+            {{ col?.label  }}
+            <div class="sortDiv" *ngIf="col?.sort">
+              <span class="sortIcon" (click)="ascendingSort(col?.field, 'asc')"
                 >&nbsp;&nbsp;▲</span
               >
-              <span class="sortIcon" (click)="decendingsort(col, 'desc')"
+              <span class="sortIcon" (click)="decendingsort(col?.field, 'desc')"
                 >&nbsp;&nbsp;▼</span
               >
             </div>
           </th>
           <td mat-cell *matCellDef="let row">
-            <div *ngIf="col !== 'action'">
-              <div *ngIf="row[col][0].type === ''">
-                {{ row[col][0].value | titlecase }}
+            <div *ngIf="col?.field !== 'action'">
+              <div *ngIf="row[col?.field]?.type === ''" title="{{row[col?.field]?.value}} ">
+                {{ row[col?.field]?.value  | titlecase | fixlength }}
               </div>
-              <div *ngIf="row[col][0].type == 'custom'">
+              <div *ngIf="row[col?.field]?.type == 'custom'">
                 <app-custom-column
-                  [cellData]="row[col]"
-                  [colName]="col"
+                  [cellData]="row[col?.field]"
+                  [colName]="col?.field"
                 ></app-custom-column>
               </div>
             </div>
-            <div *ngIf="col === 'action'">
+            <div *ngIf="col?.field === 'action'">
               <app-custom-action [cellData]="row"></app-custom-action>
             </div>
           </td>
         </ng-container>
       </div>
-      <tr mat-header-row *matHeaderRowDef="tableDisplayColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: tableDisplayColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="columnToShow"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnToShow"></tr>
 
       <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">No data matching the filter"</td>
+        <td class="mat-cell" colspan="4">
+    <marquee behavior="" direction="left">No Data Found</marquee>
+
+        </td>
       </tr>
     </table>
   </div>
 
-  <div class="pagination" *ngIf="tableInputData">
+  <div class="pagination" *ngIf="tableInputData.length > 0 ">
     <ngb-pagination
       [collectionSize]="collectionSize"
       [(page)]="page"
@@ -110,8 +114,5 @@
       [boundaryLinks]="true"
       (pageChange)="changePage($event)"
     ></ngb-pagination>
-  </div>
-  <div *ngIf="!tableInputData">
-    <p>No Data found</p>
   </div>
 </div>

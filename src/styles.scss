@@ -5,6 +5,14 @@
 body{
     width: 100% !important;
     height: 100vh;
+    font-family: 'Times New Roman', Times, serif !important;
+    letter-spacing: 1px;
+}
+.mat-table{
+    font-family: 'Times New Roman', Times, serif !important;
+    .mat-cell{
+    font-size: 18px !important;
+    }
 }
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';

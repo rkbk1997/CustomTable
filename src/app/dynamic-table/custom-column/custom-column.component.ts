@@ -22,27 +22,34 @@ export class CustomColumnComponent implements OnInit {
     this.activatedRoute.params.subscribe(
       res => this.className = res.className
     )
+      if (this.cellData.format === 'date'){
+        this.textShow = this.datepipe.transform(this.cellData.value, 'MM.dd.YYYY')
+      }else if(this.cellData.format === 'dateTime'){
+        this.textShow = this.datepipe.transform(this.cellData.value, 'MM.dd.YYYY hh.mm a')
+      }
       switch(this.className){
         case 'userList':
           if(this.colName === 'status'){
-          if (this.cellData[0].value) {
-            this.textShow = this.cellData[0].texttoshow;
+          if (this.cellData.value) {
+            this.textShow = this.cellData.texttoshow;
             this.cssClass = 'success';
           } else {
-            this.textShow = this.cellData[0].texttoshow;
+            this.textShow = this.cellData.texttoshow;
             this.cssClass = 'warning';
           }
         }else if(this.colName === 'created Date'){
-          this.textShow = this.datepipe.transform((this.cellData[0].value), 'dd.MM.YYYY')
+          this.textShow = this.datepipe.transform((this.cellData.value), 'dd.MM.YYYY')
         }
         break;
         case 'workerList':
-          if (this.cellData[0].value) {
-            this.textShow = this.cellData[0].texttoshow;
-            this.cssClass = 'active';
-          } else {
-            this.textShow = this.cellData[0].texttoshow;
-            this.cssClass = 'inactive';
+          if(this.colName === 'status'){
+            if (this.cellData.value) {
+              this.textShow = this.cellData.texttoshow;
+              this.cssClass = 'active';
+            } else {
+              this.textShow = this.cellData.texttoshow;
+              this.cssClass = 'inactive';
+            }
           }
         break;
       }   

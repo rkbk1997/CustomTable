@@ -5,6 +5,7 @@
         font-size: 30px;
         font-family: 'Times New Roman', Times, serif;
         text-transform: capitalize;
+        padding: 10px 0px;
       }
       .filterDiv {
         display: flex !important;
@@ -23,7 +24,7 @@
             background-color: rgba(0, 0, 0, 0.4);
             .mat-header-cell {
               color: #fff;
-              font-size: 17px;
+              font-size: 20px;
               &:hover > .sortDiv{
                 opacity: 1;
               }
@@ -45,7 +46,7 @@
           }
         }
         height: calc(
-          100vh - 200px
+          100vh - 100px
         ); // or height:calc(100vh - 155px); depending on your need  change
         overflow: auto;
       }
@@ -54,6 +55,7 @@
         justify-content: center;
         flex-direction: row;
         align-items: center;
+        padding: 10px 0px;
         ngb-pagination{
           .pagination {
             .page-link {
@@ -69,6 +71,13 @@
           }
         }
       }
+    }
+
+    .noddata{
+      position: absolute;
+      left: 40%;
+      top: 50%;
+      font-size: 25px;
     }
   }
 }

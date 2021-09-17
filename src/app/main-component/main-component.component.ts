@@ -39,6 +39,7 @@ export class MainComponentComponent implements OnInit, OnChanges {
       limit: 10,
       sort: { property: '', order: '' },
       class: this.className,
+      filter:[]
     };
 
     this.api.getInitialData(payload).subscribe((res) => {

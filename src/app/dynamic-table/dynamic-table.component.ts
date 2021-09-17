@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, Output, EventEmitter, SimpleChange } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, SimpleChange, ViewChild, ElementRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+// import { start } from 'repl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged} from 'rxjs/operators'
 // import { EventEmitter } from 'stream';
@@ -15,6 +16,7 @@ export class DynamicTableComponent implements OnInit {
   @Input() entityData: any;
   @Output() loadNextPage = new EventEmitter<any>();
   @Output() resetTable = new EventEmitter<any>();
+  @ViewChild ('picker') picker! : ElementRef;
   searchSubject = new Subject();
   className: any;
   tableInputData: any;
@@ -25,7 +27,11 @@ export class DynamicTableComponent implements OnInit {
   selectValue: any;
   selectedInput: any;
   selectedDate: any;
+  startDate: any;
+  endDate: any;
+  filterDate: any;
   filterData: any = []
+  columnToShow: any =[];
   page = 1;
   pageSetting = {
     pageNo: 0,
@@ -47,21 +53,33 @@ export class DynamicTableComponent implements OnInit {
     ).subscribe(
       value => {
         console.log(value,'@@@@');
+
+        this.tableDisplayColumns.forEach( (t:any) => {
+            if(t.filter === 'text') this.applyFilter(t.field , this.selectedInput) 
+        });
         
-        this.applyFilter('all');
+        // this.applyFilter('all');
       }
     )
   }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(
-      res => this.page =1
+      res =>{ this.page = 1;
+      this.resetTableData();
+      },
     )
   }
 
   ngOnChanges(changes: SimpleChange) { 
     this.className = this.entityData.class
     this.tableDisplayColumns = this.entityData?.headerToShow?.headertoShow;
+    console.log(this.tableDisplayColumns);
+    this.columnToShow = [];
+    this.tableDisplayColumns.forEach( (obj: any) => {
+      this.columnToShow.push(obj.field)
+    });
+    
     this.tableFilter = this.entityData?.filter;
     this.tableInputData = this.entityData?.tableData;
     this.collectionSize = this.entityData?.metaData;
@@ -80,21 +98,9 @@ export class DynamicTableComponent implements OnInit {
     this.loadNextPage.emit(newpageSetting);
   }
 
-  showSorting(headerName: any) {
-    if (
-      headerName == 'action' ||
-      headerName == 'description' ||
-      headerName == 'status'
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  applyFilter(header: any, event?: any) {
+  applyFilter(header: any, filterCondition: any) {
     this.filterData = this.filterData.filter((item: any) => item.header != header );
-    if(this.selectedInput)this.filterData.push({header: header, value: this.selectedInput})
+    if(this.selectedInput)this.filterData.push({header: header, value: filterCondition})
     this.page = 1
     let newpageSetting = {
       ...this.pageSetting,
@@ -119,12 +125,31 @@ export class DynamicTableComponent implements OnInit {
     this.loadNextPage.emit(newpageSetting);
   }
 
+  applyDateRangeFilter(header: any, startDate: any, endDate: any){
+    console.log('##########', startDate, endDate);
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.filterDate = {startDate : startDate , endDate: endDate}
+    this.filterData = this.filterData.filter((item: any) => item.header != header );
+    if(endDate ?? false )this.filterData.push({ header: header, value : {startDate: startDate, endDate:endDate} })
+    this.page = 1
+    let newpageSetting = {
+      ...this.pageSetting,
+      sort : this.sortFiltersetting.sort,
+      filter: this.filterData
+    }
+    this.sortFiltersetting.filter = this.filterData
+    this.loadNextPage.emit(newpageSetting);
+    
+  }
+
   ascendingSort(colName: any, order: any) {
     console.log(colName, order);
     this.page = 1
     let newpageSetting ={ 
       ...this.pageSetting,
-      sort : { property : colName , order : order }
+      sort : { property : colName , order : order },
+      filter: this.sortFiltersetting.filter
     }
     this.sortFiltersetting.sort = newpageSetting.sort
     this.loadNextPage.emit(newpageSetting);
@@ -135,7 +160,9 @@ export class DynamicTableComponent implements OnInit {
     this.page = 1
     let newpageSetting ={ 
       ...this.pageSetting,
-      sort : { property : colName , order : order }
+      sort : { property : colName , order : order },
+      filter: this.sortFiltersetting.filter
+
     }
     this.sortFiltersetting.sort = newpageSetting.sort
     this.loadNextPage.emit(newpageSetting);
@@ -146,6 +173,7 @@ export class DynamicTableComponent implements OnInit {
     this.selectValue = '';
     this.selectedInput = '';
     this.selectedDate = '';
+    this.filterDate = {}
     this.sortFiltersetting.sort = {}
     this.sortFiltersetting.filter = []
     this.resetTable.emit(this.pageSetting)

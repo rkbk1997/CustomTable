@@ -27,6 +27,7 @@ import { DatePipe } from '@angular/common';
 import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatNativeDateModule } from '@angular/material/core';
 import { HttpClientModule } from '@angular/common/http';
+import { FixlengthPipe } from './fixlength.pipe';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +37,7 @@ import { HttpClientModule } from '@angular/common/http';
     UserDetailListComponent,
     MainComponentComponent,
     HeaderComponent,
+    FixlengthPipe,
   ],
   imports: [
     BrowserModule,
