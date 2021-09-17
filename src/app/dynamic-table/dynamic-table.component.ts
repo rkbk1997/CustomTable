@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChange, ViewChild, ElementRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
@@ -46,7 +47,8 @@ export class DynamicTableComponent implements OnInit {
     filter : []
    }
 
-  constructor(private api: DataApiService, private activatedRoute: ActivatedRoute) {
+  constructor(private api: DataApiService, private activatedRoute: ActivatedRoute,
+    private datepipe: DatePipe) {
     this.searchSubject.pipe(
       debounceTime(1000),
       distinctUntilChanged()
@@ -127,11 +129,11 @@ export class DynamicTableComponent implements OnInit {
 
   applyDateRangeFilter(header: any, startDate: any, endDate: any){
     console.log('##########', startDate, endDate);
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.filterDate = {startDate : startDate , endDate: endDate}
+    this.startDate =  this.datepipe.transform (startDate ,'YYYY-MM-dd');
+    this.endDate = this.datepipe.transform(endDate , 'YYYY-MM-dd');
+    this.filterDate = {startDate : this.startDate , endDate: this.endDate}
     this.filterData = this.filterData.filter((item: any) => item.header != header );
-    if(endDate ?? false )this.filterData.push({ header: header, value : {startDate: startDate, endDate:endDate} })
+    if(endDate ?? false )this.filterData.push({ header: header, value : {startDate: this.startDate, endDate: this.endDate} })
     this.page = 1
     let newpageSetting = {
       ...this.pageSetting,
@@ -174,8 +176,12 @@ export class DynamicTableComponent implements OnInit {
     this.selectedInput = '';
     this.selectedDate = '';
     this.filterDate = {}
+    this.startDate =''
+    this.endDate =''
     this.sortFiltersetting.sort = {}
     this.sortFiltersetting.filter = []
+
     this.resetTable.emit(this.pageSetting)
+
   }
 }
