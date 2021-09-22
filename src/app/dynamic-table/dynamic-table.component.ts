@@ -175,13 +175,11 @@ export class DynamicTableComponent implements OnInit {
     this.selectValue = '';
     this.selectedInput = '';
     this.selectedDate = '';
-    this.filterDate = {}
+    this.filterData = []
     this.startDate =''
     this.endDate =''
     this.sortFiltersetting.sort = {}
     this.sortFiltersetting.filter = []
-
     this.resetTable.emit(this.pageSetting)
-
   }
 }
